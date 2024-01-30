@@ -73,9 +73,9 @@ global.normals$tmax
 ### Raster algebra
 Many generic functions that allow for simple and elegant raster algebra have been implemented for SpatRaster objects, including the normal algebraic operators such as +, -, *, /, logical operators such as >, >=, <, ==, !} and functions such as abs, round, ceiling, floor, trunc, sqrt, log, log10, exp, cos, sin, max, min, range, prod, sum, any, all. In these functions you can mix terra objects with numbers, as long as the first argument is a terra object. If you use multiple SpatRaster objects, all objects must have the same resolution and origin. 
 
-```{r, include=T}
-# Separate raster stacks: 
+Lets summarize montly data to annual normals: 
 
+```{r, include=T}
 global.ppt <- global.normals$ppt %>% sum(na.rm = TRUE)
 global.tmin <- global.normals$tmin %>% mean(na.rm = TRUE)
 global.tmax <- global.normals$tmax %>% mean(na.rm = TRUE)
@@ -96,7 +96,7 @@ names(global.tmin) <- "tmin"
 names(global.tmax) <- "tmax"
 
 ```
-Summary functions (min, max, mean, prod, sum, median, cv, range, any, all) always return a SpatRaster object. Perhaps this is not obvious when using functions like min, sum or mean.
+Summary functions (min, max, mean, prod, sum, median, cv, range, any, all) always return a SpatRaster object.
 
 Use global if instead of a SpatRaster you want a single number summarizing the cell values of each layer.
 
@@ -106,7 +106,7 @@ global( global.tmin, na.rm=T, mean)
 global( global.tmax, na.rm=T, mean)
 ```
 
-### Spatial Summaries!
+### Spatial Summaries
 
 You might also find it useful to create zonal summaries for each polygon within the simple feature. To do this we can use the function zonal, which takes a SpatRast and a SpatVect.
 
