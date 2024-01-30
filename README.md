@@ -1,6 +1,4 @@
-# Terra_Introduction
-
-Introduction to rasters with the terra package.
+# Introduction to rasters with the terra package.
 
 ### Install libraries for this workshop:
 ```{r, include=T}
@@ -36,8 +34,7 @@ A SpatVector represents “vector” data, that is, points, lines or polygon geo
 
 ### Working with climate data:
 
-To become familiar with working with rasters, we will download climate data for an AOI:
-
+To become familiar with working with rasters, we will download climate data for an area of interest (AOI). 
 ```{r, include=T}
 
 # First create an AOI
@@ -46,7 +43,13 @@ global <- aoi_get(country= c("Europe","Asia" ,"North America", "South America", 
 # Visualize your AOI
 ggplot(data = global) +geom_sf()
 ```
-# Download data for the aoi:
+We will use TerraClimate, a dataset of high-spatial resolution (1/24°, ~4-km) monthly climate and climatic water balance for global terrestrial surfaces from 1958–2015.
+
+Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191
+
+Download climate data using the library climateR for the AOI. For this exercise we will use climate normals, multi-decadal averages for climate variables like temperature and precipitation. They provide a baseline that allows us to understand the location’s average condition.
+
+Downloaded monthly precipitation ("ppt"), monthly temperature minimum ("tmin") and monthly temperature maximum ("tmax")climate normals.
 
 ```{r, include=T}
 
@@ -57,21 +60,21 @@ global.normals
 What is this object:
 ```{r, include=T}
 class(global.normals)
-
 ```
 
-To access the rasters:
+A RasterStack is a collection of RasterLayer objects with the same spatial extent and resolution. In essence it is a list of RasterLayer objects.
+
+To access the raster stacks:
 ```{r, include=T}
 global.normals$ppt
 global.normals$tmin
 global.normals$tmax
 ```
-
 ### Raster algebra
 Many generic functions that allow for simple and elegant raster algebra have been implemented for SpatRaster objects, including the normal algebraic operators such as +, -, *, /, logical operators such as >, >=, <, ==, !} and functions such as abs, round, ceiling, floor, trunc, sqrt, log, log10, exp, cos, sin, max, min, range, prod, sum, any, all. In these functions you can mix terra objects with numbers, as long as the first argument is a terra object. If you use multiple SpatRaster objects, all objects must have the same resolution and origin. 
 
 ```{r, include=T}
-# Prepare layers: 
+# Separate raster stacks: 
 
 global.ppt <- global.normals$ppt %>% sum(na.rm = TRUE)
 global.tmin <- global.normals$tmin %>% mean(na.rm = TRUE)
@@ -82,14 +85,18 @@ plot(global.ppt)
 plot(global.tmin)
 plot(global.tmax)
 
+# Check the name of the layers:
 names(global.ppt)
+names(global.tmin)
+names(global.tmax)
 
+# re-name the layers:
 names(global.ppt) <- "ppt"
 names(global.tmin) <- "tmin"
 names(global.tmax) <- "tmax"
 
 ```
-Summary functions (min, max, mean, prod, sum, Median, cv, range, any, all) always return a SpatRaster object. Perhaps this is not obvious when using functions like min, sum or mean.
+Summary functions (min, max, mean, prod, sum, median, cv, range, any, all) always return a SpatRaster object. Perhaps this is not obvious when using functions like min, sum or mean.
 
 Use global if instead of a SpatRaster you want a single number summarizing the cell values of each layer.
 
@@ -101,20 +108,21 @@ global( global.tmax, na.rm=T, mean)
 
 ### Spatial Summaries!
 
-You might also find it useful to create zonal summaries for each polygon within the simple feature. To do this we can use the function zonal, which takes a Spatrast and a Spatvect.
+You might also find it useful to create zonal summaries for each polygon within the simple feature. To do this we can use the function zonal, which takes a SpatRast and a SpatVect.
 
 ```{r, include=T}
 global.ppt.country <- zonal(x = global.ppt, 
-z= vect(global)  ,fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
+z= vect(global) , fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
 
 global.tmin.country <- zonal(x = global.tmin, 
-z= vect(global)  ,fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
+z= vect(global) ,fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
 
 global.tmax.country <- zonal(x = global.tmax, 
-z= vect(global)  ,fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
+z= vect(global) ,fun = "mean", as.polygons=TRUE,  na.rm=TRUE)
 
 ```
-We can convert the Spatvect back to a simple feature and plot it.
+Convert the SpatVect back to a simple feature and plot it.
+
 ```{r, include=T}
 
 global.ppt.country.sf <- st_as_sf(global.ppt.country)   
@@ -125,22 +133,22 @@ ggplot( data=global.ppt.country.sf ) + geom_sf(aes(fill= ppt))
 ggplot( data=global.tmin.country.sf ) + geom_sf(aes(fill= tmin))
 ggplot( data=global.tmax.country.sf ) + geom_sf(aes(fill= tmax))
 ```
-# combine Spatrast into a stack:
+Combine SpatRast into a raster stack:
 ```{r, include=T}
 global( global.ppt, na.rm=T, mean)
 global( global.tmin, na.rm=T, mean)
 global( global.tmax, na.rm=T, mean)
 
 global.climate <- c( global.ppt, global.tmin, global.tmax)
+```
+### Extracting information to a point file:
 
-### Extracting information for a point file:
-```{r, include=T}
+Import your point file FLUXNET.ch4:
 
-# Import your point file:
 ```{r, include=T}
 FLUXNET.ch4 <- st_read(dsn="Data", layer="FLUXNET_CH4")
 ```
-# Ensure both files have the same CRS:
+Ensure both files have the same coordinate reference system (CRS):
 ```{r, include=T}
 FLUXNET.ch4 
 global.climate 
@@ -149,7 +157,8 @@ FLUXNET.ch4  <- st_transform(FLUXNET.ch4, crs= crs(global.climate ))
 
 ggplot() + geom_spatraster( data=global.climate, aes(fill = ppt)) +geom_sf( data =FLUXNET.ch4 )
 ```
-### Extract information from your raster layer using terra::extract()
+Extract information from your raster stack using terra::extract()
+
 ```{r, include=T}
 FLUXNET.ch4$ppt <-terra::extract( global.climate,FLUXNET.ch4)$ppt
 
@@ -157,5 +166,6 @@ FLUXNET.ch4$tmax <-terra::extract( global.climate,FLUXNET.ch4)$tmax
 
 FLUXNET.ch4$tmin <-terra::extract( global.climate,FLUXNET.ch4)$tmin 
 ```
-Fluxnet data can be used to understand patterns in natural methane fluxes. Evaluating the conditions where measurements are taken is essential. Describe the conditions where measurements are being taken
+FLUXNET data can be used to understand patterns in natural methane fluxes. Evaluating the conditions where measurements are taken is essential to designing a useful model. 
 
+We will use data from FLUXNET CH4 to explore patterns in natural methane emissions. Explore the distribution of tower sites and create 2 visualizations of this dataset that may be helpful to understand in the design and development of models. You are welcome to use any additional data or just new plot types.
