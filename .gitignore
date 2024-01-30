@@ -6,3 +6,9 @@ Terra_Introduction.Rproj
 Terra_prep.R
 .DS_Store
 wc5/
+Intro2Terra.RDATA
+Outfiles.R
+Intro2Terra_GlobalNormals_ppt.tif
+Intro2Terra_GlobalNormals_tmin.tif
+Intro2Terra_GlobalNormals_tmax.tif
+BackupData.zip
