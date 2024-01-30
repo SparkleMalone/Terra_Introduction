@@ -21,7 +21,7 @@ library(climateR)
 library(sf)
 library(tidyterra)
 ```
-# Rasters
+## Rasters
 A raster is a spatial data structure that subdivides an extent into rectangles known as "cells" (or "pixels"). Each cell has the capacity to store one or more values. This type of data structure is commonly referred to as a "grid" and is frequently juxtaposed with simple features.
 
 The terra package offers functions designed for the creation, reading, manipulation, and writing of raster data. The terra package is built around a number of “classes” of which the SpatRaster and SpatVector are the most important.
@@ -32,7 +32,7 @@ A SpatRaster object stores a number of fundamental parameters that describe it. 
 #### SpatVector
 A SpatVector represents “vector” data, that is, points, lines or polygon geometries and their tabular attributes.
 
-### Working with climate data:
+#### Working with climate data:
 
 To become familiar with working with rasters, we will download climate data for an area of interest (AOI). 
 ```{r, include=T}
@@ -68,7 +68,7 @@ global.normals$ppt
 global.normals$tmin
 global.normals$tmax
 ```
-### Raster algebra
+#### Raster algebra
 Many generic functions that allow for simple and elegant raster algebra have been implemented for SpatRaster objects, including the normal algebraic operators such as +, -, *, /, logical operators such as >, >=, <, ==, !} and functions such as abs, round, ceiling, floor, trunc, sqrt, log, log10, exp, cos, sin, max, min, range, prod, sum, any, all. In these functions you can mix terra objects with numbers, as long as the first argument is a terra object. If you use multiple SpatRaster objects, all objects must have the same resolution and origin. 
 
 Lets summarize montly data to annual normals: 
@@ -104,7 +104,7 @@ global( global.tmin, na.rm=T, mean)
 global( global.tmax, na.rm=T, mean)
 ```
 
-### Spatial Summaries
+#### Spatial Summaries
 
 You might also find it useful to create zonal summaries for each polygon within the simple feature. To do this we can use the function zonal, which takes a SpatRast and a SpatVect.
 
@@ -139,7 +139,7 @@ global( global.tmax, na.rm=T, mean)
 
 global.climate <- c( global.ppt, global.tmin, global.tmax)
 ```
-### Extracting information to a point file:
+#### Extracting information to a point file:
 
 Import your point file FLUXNET.ch4:
 
@@ -168,6 +168,6 @@ FLUXNET data can be used to understand patterns in natural methane fluxes. Evalu
 
 We will use data from FLUXNET CH4 to explore patterns in natural methane emissions. Explore the distribution of tower sites and create 2 visualizations of this dataset that may be helpful to understand in the design and development of models. You are welcome to use any additional data or just new plot types.
 
-### References
+#### References
 
 Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191
