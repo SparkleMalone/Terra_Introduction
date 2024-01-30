@@ -43,9 +43,7 @@ global <- aoi_get(country= c("Europe","Asia" ,"North America", "South America", 
 # Visualize your AOI
 ggplot(data = global) +geom_sf()
 ```
-We will use TerraClimate, a dataset of high-spatial resolution (1/24°, ~4-km) monthly climate and climatic water balance for global terrestrial surfaces from 1958–2015.
-
-Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191
+We will use TerraClimate, a dataset of high-spatial resolution (1/24°, ~4-km) monthly climate and climatic water balance for global terrestrial surfaces from 1958–2015 (Abatzoglou, 2018).
 
 Download climate data using the library climateR for the AOI. For this exercise we will use climate normals, multi-decadal averages for climate variables like temperature and precipitation. They provide a baseline that allows us to understand the location’s average condition.
 
@@ -169,3 +167,7 @@ FLUXNET.ch4$tmin <-terra::extract( global.climate,FLUXNET.ch4)$tmin
 FLUXNET data can be used to understand patterns in natural methane fluxes. Evaluating the conditions where measurements are taken is essential to designing a useful model. 
 
 We will use data from FLUXNET CH4 to explore patterns in natural methane emissions. Explore the distribution of tower sites and create 2 visualizations of this dataset that may be helpful to understand in the design and development of models. You are welcome to use any additional data or just new plot types.
+
+### References
+
+Abatzoglou, J., Dobrowski, S., Parks, S. et al. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958–2015. Sci Data 5, 170191 (2018). https://doi.org/10.1038/sdata.2017.191
